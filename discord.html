@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Submission</title>
+</head>
+<body>
+    <h1>Submit Link to Discord</h1>
+    <input type="text" id="linkInput" placeholder="Enter link here" />
+    <button onclick="submitLink()">Submit</button>
+    
+    <div id="response"></div>
+
+    <script>
+        async function submitLink() {
+            const link = document.getElementById('linkInput').value;
+            
+            if (!link) {
+                alert("Please enter a link");
+                return;
+            }
+
+            // Make a POST request to the back-end
+            try {
+                const response = await fetch('http://localhost:5000/send-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ link }),
+                });
+
+                const data = await response.json();
+                
+                // Check if a link was returned, and create a clickable link
+                if (data.message) {
+                    const responseDiv = document.getElementById('response');
+                    responseDiv.innerHTML = `<a href="${data.message}" target="_blank">${data.message}</a>`;
+                }
+            } catch (error) {
+                console.error("Error submitting link:", error);
+                alert("Failed to submit the link.");
+            }
+        }
+    </script>
+</body>
+</html>
